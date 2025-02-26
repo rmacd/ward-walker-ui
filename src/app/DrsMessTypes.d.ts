@@ -39,6 +39,7 @@ export interface SiteDTO {
     siteId?: string;
     name?: string;
     wards?: WardDTO[] | null;
+    percentWalked3m?: number;
 }
 
 export interface WardDTO {
