@@ -5,57 +5,64 @@ import { Button, Container, Group, Paper, Text, Title } from "@mantine/core";
 import Link from "next/link";
 import { useAuth } from "@espresso-lab/mantine-cognito";
 import { getAccessToken } from "@espresso-lab/mantine-cognito";
-import {UserProfileDTO} from "@/app/DrsMessTypes";
+import {HealthBoardDTO, UserProfileDTO} from "@/app/DrsMessTypes";
 
-async function fetchUserProfile(): Promise<UserProfileDTO | null> {
+async function fetchWithAuth<T>(url: string, method: "GET" | "POST" | "PUT" = "GET"): Promise<T | null> {
     try {
         const token = await getAccessToken();
-        const response = await fetch("/api/v1/profile", {
-            method: "GET",
+        const response = await fetch(url, {
+            method,
             headers: {
                 "Authorization": `Bearer ${token ?? ""}`,
+                "Content-Type": "application/json",
             },
         });
-
         if (!response.ok) {
-            throw new Error("Failed to fetch user profile");
+            throw new Error(`Failed to fetch from ${url}`);
         }
-
         return await response.json();
     } catch (error) {
-        console.error("Error fetching user profile:", error);
+        console.error(`Error fetching from ${url}:`, error);
         return null;
     }
 }
 
+
 export default function Home() {
     const { logout } = useAuth();
+    const [profile, setProfile] = useState<UserProfileDTO>({});
     const [nickname, setNickname] = useState<string | null>(null);
+    const [healthBoard, setHealthBoard] = useState<HealthBoardDTO>({});
 
     useEffect(() => {
-        fetchUserProfile().then((profile) => {
-            if (profile) {
-                setNickname(profile.nickname);
+        fetchWithAuth<UserProfileDTO>("/api/v1/profile").then((profileResponse) => {
+            if (profileResponse) {
+                setProfile(profileResponse);
+                setNickname(profileResponse.nickname || '');
             }
         });
     }, []);
 
+    useEffect(() => {
+        if (profile.healthBoardId && profile.healthBoardId.length > 0) {
+            fetchWithAuth<HealthBoardDTO>("/api/v1/health-boards/" + profile.healthBoardId).then((healthBoardResponse) => {
+                if (healthBoardResponse) {
+                    console.log(healthBoardResponse);
+                    setHealthBoard(healthBoardResponse);
+                }
+            });
+        }
+    }, [profile]);
+
     return (
         <Container size={"md"} py={"xl"}>
-            <Paper shadow={"xs"} p={"xl"} mb={"xl"}>
-                <Title order={2}>Welcome, {nickname ? nickname : "Guest"}</Title>
-            </Paper>
+
+            <Text>Welcome, {nickname ? nickname : "Guest"}</Text>
 
             <Paper shadow={"xs"} p={"xl"} mb={"xl"}>
-                <Text mb="xs">Why use Ward Walker?</Text>
-                <ul>
-                    <li>See which wards have been covered.</li>
-                    <li>Plan visits by reserving a ward.</li>
-                    <li>Get a clear overview across the health board / trust.</li>
-                </ul>
-                <Text>
-                    Note that only authorised and approved users are able to access the Ward Walker.
-                </Text>
+                <Title order={2} mb="xs">Leaderboard: {healthBoard.name}</Title>
+
+
             </Paper>
 
             <Group mt="lg">

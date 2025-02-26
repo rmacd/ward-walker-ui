@@ -33,8 +33,10 @@ export interface MarkerDTO {
 }
 
 export interface UserProfileDTO {
-    cognitoId?: string;
+    cognitoId?: string | null;
     nickname?: string;
+    healthBoardId?: string | null;
+    healthBoardName?: string | null;
     permitEmail?: boolean;
 }
 
