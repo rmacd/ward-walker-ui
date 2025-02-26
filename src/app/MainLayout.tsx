@@ -1,4 +1,5 @@
 "use client";
+
 import '@mantine/core/styles.css';
 import classes from './MainLayout.module.css';
 import {AppShell, Burger, Group, Title, UnstyledButton} from "@mantine/core";
@@ -14,8 +15,6 @@ const links = [
 export function MainLayout({children}: { children: React.ReactNode }) {
 
     const [opened, {toggle}] = useDisclosure();
-
-
 
     return (
         <AppShell

@@ -22,19 +22,9 @@ export interface VerifyEmailReqDTO {
     email?: string;
 }
 
-export interface MarkerDTO {
-    siteId?: string;
-    count?: number;
-    lat?: number;
-    lng?: number;
-    name?: string;
-    type?: MarkerTypeEnum;
-    status?: MarkerStatusEnum;
-}
-
 export interface UserProfileDTO {
     cognitoId?: string | null;
-    nickname?: string;
+    nickname?: string | null;
     healthBoardId?: string | null;
     healthBoardName?: string | null;
     permitEmail?: boolean;
@@ -45,14 +35,13 @@ export interface HealthBoardDTO {
     name?: string;
 }
 
-export enum MarkerTypeEnum {
-    SINGLE = "SINGLE",
-    CLUSTER = "CLUSTER",
+export interface SiteDTO {
+    siteId?: string;
+    name?: string;
+    wards?: WardDTO[] | null;
 }
 
-export enum MarkerStatusEnum {
-    GREY = "GREY",
-    RED = "RED",
-    AMBER = "AMBER",
-    GREEN = "GREEN",
+export interface WardDTO {
+    code?: string;
+    name?: string;
 }

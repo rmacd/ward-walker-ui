@@ -1,15 +1,35 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import { useForm } from '@mantine/form';
-import { Button, Checkbox, Container, Loader, Select, TextInput, Title } from '@mantine/core';
-import { HealthBoardDTO, UserProfileDTO } from "@/app/DrsMessTypes";
-import { getAccessToken } from "@espresso-lab/mantine-cognito";
+import {useEffect, useState} from 'react';
+import {useForm} from '@mantine/form';
+import {Button, Checkbox, Container, Loader, Select, TextInput, Title} from '@mantine/core';
+import {HealthBoardDTO, UserProfileDTO} from "@/app/DrsMessTypes";
+import {getAccessToken} from "@espresso-lab/mantine-cognito";
+
+export async function fetchWithAuth<T>(url: string, method: "GET" | "POST" | "PUT" = "GET"): Promise<T | null> {
+    try {
+        const token = await getAccessToken();
+        const response = await fetch(url, {
+            method,
+            headers: {
+                "Authorization": `Bearer ${token ?? ""}`,
+                "Content-Type": "application/json",
+            },
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to fetch from ${url}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching from ${url}:`, error);
+        return null;
+    }
+}
 
 export default function Profile() {
+    const [profile, setProfile] = useState<UserProfileDTO>({});
     const [healthBoards, setHealthBoards] = useState<HealthBoardDTO[]>([]);
     const [loading, setLoading] = useState(true);
-    const [profileLoading, setProfileLoading] = useState(true);
 
     const form = useForm({
         initialValues: {
@@ -23,66 +43,54 @@ export default function Profile() {
         },
     });
 
-    const fetchUserProfile = async () => {
-        try {
-            const token = await getAccessToken();
-            const response = await fetch('/api/v1/profile', {
-                method: 'GET',
-                headers: {
-                    "Authorization": `Bearer ${token ?? ""}`
-                }
-            });
+    useEffect(() => {
+        form.setValues({
+            nickname: profile.nickname || '',
+            healthBoardId: profile.healthBoardId || '',
+            permitEmail: profile.permitEmail ?? false,
+        })
+    }, [profile]);
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch user profile');
-            }
-
-            const profile: UserProfileDTO = await response.json();
-            form.setValues({
-                nickname: profile.nickname,
-                healthBoardId: profile.healthBoardId || '',
-                permitEmail: profile.permitEmail,
-            });
-        } catch (error) {
-            console.error('Error fetching user profile:', error);
-        } finally {
-            setProfileLoading(false);
-        }
-    };
 
     useEffect(() => {
-        const fetchHealthBoards = async () => {
+        async function fetchData() {
             try {
-                const token = await getAccessToken();
-                const response = await fetch('/api/v1/health-boards', {
-                    headers: {
-                        "Authorization": `Bearer ${token ?? ""}`
-                    }
-                });
-                const data: HealthBoardDTO[] = await response.json();
-                setHealthBoards(data);
-            } catch (error) {
-                console.error('Error fetching health boards:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
+                const [healthBoardsResponse, profileResponse] = await Promise.all([
+                    fetchWithAuth<HealthBoardDTO[]>("/api/v1/health-boards"),
+                    fetchWithAuth<UserProfileDTO>("/api/v1/profile"),
+                ]);
 
-        fetchHealthBoards();
-        fetchUserProfile();
+                console.debug("got hb", healthBoardsResponse);
+                console.debug("got profile", profileResponse);
+
+                if (healthBoardsResponse) {
+                    setHealthBoards(healthBoardsResponse);
+                }
+                if (profileResponse) {
+                    setProfile(profileResponse);
+                }
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                console.debug("Setting 'loading' to false");
+                setLoading(false); // Ensures loading is updated only once
+            }
+        }
+
+        fetchData();
     }, []);
 
-    if (loading || profileLoading) {
+    if (loading) {
         return (
-            <Container size="sm" py="xl" style={{ textAlign: 'center' }}>
-                <Loader size="lg" />
+            <Container size="sm" py="xl" style={{textAlign: 'center'}}>
+                <Loader size="lg"/>
                 <Title order={3} mt="md">Loading...</Title>
             </Container>
         );
     }
 
     const handleSubmit = async (values: typeof form.values) => {
-        console.log('Form values:', values);
         try {
             const token = await getAccessToken();
             const response = await fetch('/api/v1/profile', {
@@ -119,7 +127,7 @@ export default function Profile() {
                 <Select
                     label="Health Board"
                     placeholder="Select your health board"
-                    data={healthBoards.map((board) => ({ value: board.hbId, label: board.name }))}
+                    data={healthBoards.map((board) => ({value: board.hbId || '', label: board.name || ''}))}
                     {...form.getInputProps('healthBoardId')}
                     required
                     mb="md"
@@ -128,7 +136,7 @@ export default function Profile() {
 
                 <Checkbox
                     label="Permit emails"
-                    {...form.getInputProps('permitEmail', { type: 'checkbox' })}
+                    {...form.getInputProps('permitEmail', {type: 'checkbox'})}
                     mb="lg"
                 />
 
