@@ -1,10 +1,12 @@
 // Import styles of packages that you've installed.
 // All packages except `@mantine/hooks` require styles imports
 import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
 
 import {ColorSchemeScript, MantineProvider, mantineHtmlProps} from '@mantine/core';
 import {MainLayout} from "@/app/MainLayout";
 import {AuthProviderWrapper} from "@/app/AuthProviderWrapper";
+import {Notifications} from '@mantine/notifications';
 
 export const metadata = {
     title: 'Ward Walker',
@@ -24,6 +26,7 @@ export default function RootLayout({
         <body>
 
         <MantineProvider>
+            <Notifications position={"top-center"}/>
             <AuthProviderWrapper>
                 <MainLayout>
                     {children}

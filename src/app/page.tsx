@@ -64,15 +64,15 @@ export default function Home() {
                 </Table.Thead>
                 <Table.Tbody>
                     {sites.map((site: SiteDTO) => (
-                        <Table.Tr key={site.siteId} style={{cursor: "pointer"}} onClick={() => handleRowClick(healthBoard.hbId, site.siteId || '')}>
+                        <Table.Tr key={site.siteId} style={{cursor: "pointer"}} onClick={() => handleRowClick(healthBoard.hbId || '', site.siteId || '')}>
                             <Table.Td>{site.name}</Table.Td>
                             <Table.Td>
                                 <Progress.Root size="xl">
                                     <Progress.Section value={site.percentWalked3m || 0} color="green">
-                                        <Progress.Label>{site.percentWalked3m}%</Progress.Label>
+                                        <Progress.Label>{Math.round(site.percentWalked3m || 0)}%</Progress.Label>
                                     </Progress.Section>
                                     <Progress.Section value={(100 - (site.percentWalked3m || 0))} color="red">
-                                        <Progress.Label>{site.percentWalked3m}%</Progress.Label>
+                                        <Progress.Label>{Math.round(100 - (site.percentWalked3m || 0))}% remaining</Progress.Label>
                                     </Progress.Section>
                                 </Progress.Root>
                             </Table.Td>

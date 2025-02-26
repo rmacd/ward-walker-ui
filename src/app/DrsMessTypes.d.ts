@@ -45,4 +45,13 @@ export interface SiteDTO {
 export interface WardDTO {
     code?: string;
     name?: string;
+    lastWalked?: Date | null;
+    walks?: WalkDTO[] | null;
+}
+
+export interface WalkDTO {
+    id?: string | null;
+    date?: Date;
+    comments?: string;
+    name?: string | null;
 }

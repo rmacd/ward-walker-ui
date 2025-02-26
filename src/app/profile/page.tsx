@@ -6,6 +6,8 @@ import {Button, Checkbox, Container, Loader, Select, TextInput, Title} from '@ma
 import {HealthBoardDTO, UserProfileDTO} from "@/app/DrsMessTypes";
 import {getAccessToken} from "@espresso-lab/mantine-cognito";
 
+import { notifications } from '@mantine/notifications';
+
 export async function fetchWithAuth<T>(url: string, method: "GET" | "POST" | "PUT" = "GET"): Promise<T | null> {
     try {
         const token = await getAccessToken();
@@ -106,8 +108,19 @@ export default function Profile() {
                 throw new Error('Failed to save profile');
             }
 
+            notifications.show({
+                title: 'Success',
+                message: 'Profile saved',
+                color: 'green'
+            });
+
         } catch (error) {
             console.error('Error submitting profile:', error);
+            notifications.show({
+                title: 'Error',
+                message: 'Error submitting request',
+                color: 'red'
+            })
         }
     };
 

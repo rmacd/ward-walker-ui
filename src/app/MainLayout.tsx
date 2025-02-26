@@ -39,7 +39,7 @@ export function MainLayout({children}: { children: React.ReactNode }) {
 
             <AppShell.Navbar py="md" px={4}>
                 {links.map((link) => (
-                    <UnstyledButton key={link.label} className={classes.control}>{link.label}</UnstyledButton>
+                    <UnstyledButton component={Link} href={link.link} key={link.label} className={classes.control} onClick={toggle}>{link.label}</UnstyledButton>
                 ))}
             </AppShell.Navbar>
 
