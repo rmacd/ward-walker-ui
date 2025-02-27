@@ -2,11 +2,13 @@
 
 import '@mantine/core/styles.css';
 import classes from './MainLayout.module.css';
-import {AppShell, Burger, Group, Title, UnstyledButton} from "@mantine/core";
+import {Anchor, AppShell, Burger, Group, Title, UnstyledButton} from "@mantine/core";
 import {useDisclosure} from "@mantine/hooks";
 import Link from "next/link";
-import {signIn, useSession} from "next-auth/react";
+import {signIn, signOut, useSession} from "next-auth/react";
 import LoginUnstyled from "@/components/login-unstyled";
+import {useEffect} from "react";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const links = [
     {link: '/', label: 'Home'},
@@ -16,32 +18,34 @@ const links = [
 export function MainLayout({children}: { children: React.ReactNode }) {
 
     const [opened, {toggle}] = useDisclosure();
-    const {data: session} = useSession({
-        required: true,
-        onUnauthenticated() {
-            signIn("cognito")
-        }
-    });
+    const {data: session} = useSession({required: true});
+
+    if (!session?.accessToken) {
+        return <LoadingSpinner/>
+    }
 
     return (
         <AppShell
             header={{ height: 60 }}
             navbar={{ width: 300, breakpoint: 'sm', collapsed: { desktop: true, mobile: !opened } }}
-            padding="md"
-        >
+            padding="md">
             <AppShell.Header>
                 <Group h="100%" px="md">
                     <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
                     <Group justify="space-between" style={{ flex: 1 }}>
-                        {/*<MantineLogo size={30} />*/}
-                        <Title order={3} style={{cursor: "pointer"}}>Ward Walker</Title>
+                        <UnstyledButton component={Link} href={"/"} className={classes.control}>
+                            <Title order={3}>Ward Walker</Title>
+                        </UnstyledButton>
                         <Group ml="xl" gap={0} visibleFrom="sm">
                             {links.map((link) => (
                                 <UnstyledButton component={Link} href={link.link} key={link.label} className={classes.control}>{link.label}</UnstyledButton>
                             ))}
 
                             {(session) && (
+                                <>
                                 <UnstyledButton component={Link} href={'/profile'} className={classes.control}>Profile</UnstyledButton>
+                                <UnstyledButton onClick={() => signOut()} className={classes.control}>Logout</UnstyledButton>
+                                </>
                             )}
 
                             {(!session) && (

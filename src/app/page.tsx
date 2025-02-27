@@ -7,7 +7,7 @@ import Link from "next/link";
 import {HealthBoardDTO, SiteDTO, UserProfileDTO} from "@/app/DrsMessTypes";
 import {fetchWithAuth} from "@/utils/fetchWithAuth";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import {signIn, useSession} from "next-auth/react";
+import {useSession} from "next-auth/react";
 
 export default function Home() {
     // const { logout } = useAuth();
@@ -17,7 +17,7 @@ export default function Home() {
     const [healthBoard, setHealthBoard] = useState<HealthBoardDTO>({} as HealthBoardDTO);
     const [sites, setSites] = useState<SiteDTO[]>([]);
 
-    const {data: session} = useSession();
+    const {data: session} = useSession({required: true});
 
     useEffect(() => {
         fetchWithAuth<UserProfileDTO>("/api/v1/profile", session?.accessToken).then((profileResponse) => {

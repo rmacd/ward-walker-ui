@@ -2,7 +2,7 @@
 
 export async function fetchWithAuth<T>(url: string, token: string | undefined | null, method: "GET" | "POST" | "PUT" = "GET"): Promise<T | null> {
     if (null == token || token.length == 0) {
-        console.error("Token is missing")
+        console.error("Token is missing");
         return null;
     }
     try {

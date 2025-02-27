@@ -27,10 +27,6 @@ export default function ProfilePage() {
     });
 
     useEffect(() => {
-        console.debug("Profile.tsx: auth status", status, "session", session);
-    }, [session, status]);
-
-    useEffect(() => {
         form.setValues({
             nickname: profile.nickname || '',
             healthBoardId: profile.healthBoardId || '',
@@ -39,8 +35,6 @@ export default function ProfilePage() {
     }, [profile]);
 
     useEffect(() => {
-        // todo remove
-        console.debug("Profile.tsx: auth status", status, "session/token", session?.accessToken);
         if (status !== "authenticated") return;
 
         async function fetchData() {
@@ -49,10 +43,6 @@ export default function ProfilePage() {
                     fetchWithAuth<HealthBoardDTO[]>("/api/v1/health-boards", session?.accessToken),
                     fetchWithAuth<UserProfileDTO>("/api/v1/profile", session?.accessToken),
                 ]);
-
-                console.debug("got hb", healthBoardsResponse);
-                console.debug("got profile", profileResponse);
-
                 if (healthBoardsResponse) {
                     setHealthBoards(healthBoardsResponse);
                 }
