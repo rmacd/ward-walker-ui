@@ -5,7 +5,6 @@ import {Accordion, Button, Container, Group, Modal, Paper, Text, Textarea, Title
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
-import {fetchWithAuth} from "@/app/profile/page";
 import { WalkDTO, WardDTO} from "@/app/DrsMessTypes";
 
 import '@mantine/dates/styles.css'
@@ -16,9 +15,10 @@ import {useForm} from "@mantine/form";
 import {getAccessToken} from "@espresso-lab/mantine-cognito";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import {fetchWithAuth} from "@/utils/fetchWithAuth";
 dayjs.extend(relativeTime);
 
-export default function About() {
+export default function WardPage() {
 
     const router = useRouter();
     const params = useParams();

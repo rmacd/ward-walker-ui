@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
     async rewrites() {
         return [
             {
@@ -10,6 +9,23 @@ const nextConfig: NextConfig = {
             },
         ];
     },
+  /* config options here */
+    // productionBrowserSourceMaps: true,
+    // webpack: (config, { isServer }) => {
+    //     if (isServer) {
+    //         config.externals = [
+    //             ...config.externals,
+    //             "@espresso-lab/mantine-cognito", // Exclude from server bundle
+    //         ];
+    //     }
+    //     return config;
+    // },
+};
+
+module.exports = {
+    // ... rest of the configuration.
+    output: "export",
+
 };
 
 export default nextConfig;

@@ -5,20 +5,19 @@ import {Button, Container, Group, Paper, Title} from "@mantine/core";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
-import {fetchWithAuth} from "@/app/profile/page";
 import {SiteDTO, WardDTO} from "@/app/DrsMessTypes";
-
+import {fetchWithAuth} from "@/utils/fetchWithAuth";
 import sortBy from 'lodash/sortBy';
 import dayjs from 'dayjs';
 import relativeTime from "dayjs/plugin/relativeTime";
-dayjs.extend(relativeTime);
 
+dayjs.extend(relativeTime);
 import '@mantine/core/styles.layer.css';
 import 'mantine-datatable/styles.layer.css';
 import '@/app/layout-data-table.css';
 import {DataTable, DataTableSortStatus} from "mantine-datatable";
 
-export default function About() {
+export default function SitePage() {
 
     const router = useRouter();
     const params = useParams();
@@ -50,8 +49,6 @@ export default function About() {
             setRecords(sortStatus.direction === 'desc' ? sortedData.reverse() : sortedData);
         }
     }, [sortStatus, site]);
-
-    const now = dayjs();
 
     const handleRowClick = (wardCode: string) => {
         console.debug(`Navigating to ward: ${params?.healthBoard}/${params?.siteId}/${wardCode}`);

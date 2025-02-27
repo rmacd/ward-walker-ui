@@ -1,34 +1,15 @@
 "use client";
 
 import {useEffect, useState} from 'react';
-import {useForm} from '@mantine/form';
 import {Button, Checkbox, Container, Loader, Select, TextInput, Title} from '@mantine/core';
 import {HealthBoardDTO, UserProfileDTO} from "@/app/DrsMessTypes";
 import {getAccessToken} from "@espresso-lab/mantine-cognito";
+import {useForm} from '@mantine/form';
 
 import { notifications } from '@mantine/notifications';
+import {fetchWithAuth} from "@/utils/fetchWithAuth";
 
-export async function fetchWithAuth<T>(url: string, method: "GET" | "POST" | "PUT" = "GET"): Promise<T | null> {
-    try {
-        const token = await getAccessToken();
-        const response = await fetch(url, {
-            method,
-            headers: {
-                "Authorization": `Bearer ${token ?? ""}`,
-                "Content-Type": "application/json",
-            },
-        });
-        if (!response.ok) {
-            throw new Error(`Failed to fetch from ${url}`);
-        }
-        return await response.json();
-    } catch (error) {
-        console.error(`Error fetching from ${url}:`, error);
-        return null;
-    }
-}
-
-export default function Profile() {
+export default function ProfilePage() {
     const [profile, setProfile] = useState<UserProfileDTO>({});
     const [healthBoards, setHealthBoards] = useState<HealthBoardDTO[]>([]);
     const [loading, setLoading] = useState(true);

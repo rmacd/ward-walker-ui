@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import {useRouter} from "next/navigation";
-import {Button, Container, Group, Paper, Progress, Table, Text, Title} from "@mantine/core";
+import {Button, Container, Group, Paper, Progress, Table, Title} from "@mantine/core";
 import Link from "next/link";
 import {HealthBoardDTO, SiteDTO, UserProfileDTO} from "@/app/DrsMessTypes";
-import {fetchWithAuth} from "@/app/profile/page";
+import {fetchWithAuth} from "@/utils/fetchWithAuth";
 
 export default function Home() {
     // const { logout } = useAuth();
@@ -42,7 +42,7 @@ export default function Home() {
     }, [profile]);
 
     const handleRowClick = (healthBoardId: string, siteId: string) => {
-        console.debug(`Navigating to hospital: ${healthBoardId}/${siteId}`);
+        console.debug(`Navigating ${nickname} to hospital: ${healthBoardId}/${siteId}`);
         router.push(`/boards/${healthBoardId}/sites/${siteId}`);
     };
 
