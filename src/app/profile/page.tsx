@@ -3,16 +3,19 @@
 import {useEffect, useState} from 'react';
 import {Button, Checkbox, Container, Loader, Select, TextInput, Title} from '@mantine/core';
 import {HealthBoardDTO, UserProfileDTO} from "@/app/DrsMessTypes";
-import {getAccessToken} from "@espresso-lab/mantine-cognito";
 import {useForm} from '@mantine/form';
 
 import { notifications } from '@mantine/notifications';
 import {fetchWithAuth} from "@/utils/fetchWithAuth";
+import {RootState} from "@/lib/store";
+import {useAppSelector} from "@/lib/hooks";
 
 export default function ProfilePage() {
     const [profile, setProfile] = useState<UserProfileDTO>({});
     const [healthBoards, setHealthBoards] = useState<HealthBoardDTO[]>([]);
     const [loading, setLoading] = useState(true);
+
+    const token = useAppSelector((state: RootState) => state.auth.accessToken);
 
     const form = useForm({
         initialValues: {
@@ -75,7 +78,6 @@ export default function ProfilePage() {
 
     const handleSubmit = async (values: typeof form.values) => {
         try {
-            const token = await getAccessToken();
             const response = await fetch('/api/v1/profile', {
                 method: 'PUT',
                 body: JSON.stringify(values),

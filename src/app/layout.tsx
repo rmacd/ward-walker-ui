@@ -7,6 +7,8 @@ import {ColorSchemeScript, MantineProvider, mantineHtmlProps} from '@mantine/cor
 import {MainLayout} from "@/app/MainLayout";
 import {AuthProviderWrapper} from "@/app/AuthProviderWrapper";
 import {Notifications} from '@mantine/notifications';
+import StoreProvider from "@/components/StoreProvider";
+import React from "react";
 
 export const metadata = {
     title: 'Ward Walker',
@@ -27,11 +29,13 @@ export default function RootLayout({
 
         <MantineProvider>
             <Notifications position={"top-center"}/>
-            <AuthProviderWrapper>
-                <MainLayout>
-                    {children}
-                </MainLayout>
-            </AuthProviderWrapper>
+            <StoreProvider>
+                <AuthProviderWrapper>
+                    <MainLayout>
+                        {children}
+                    </MainLayout>
+                </AuthProviderWrapper>
+            </StoreProvider>
         </MantineProvider>
 
         </body>

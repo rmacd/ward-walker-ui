@@ -1,10 +1,7 @@
 "use client";
 
-import { getAccessToken } from "@espresso-lab/mantine-cognito";
-
-export async function fetchWithAuth<T>(url: string, method: "GET" | "POST" | "PUT" = "GET"): Promise<T | null> {
+export async function fetchWithAuth<T>(url: string, token: string | null, method: "GET" | "POST" | "PUT" = "GET"): Promise<T | null> {
     try {
-        const token = await getAccessToken();
         const response = await fetch(url, {
             method,
             headers: {

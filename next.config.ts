@@ -10,16 +10,6 @@ const nextConfig: NextConfig = {
         ];
     },
   /* config options here */
-    // productionBrowserSourceMaps: true,
-    // webpack: (config, { isServer }) => {
-    //     if (isServer) {
-    //         config.externals = [
-    //             ...config.externals,
-    //             "@espresso-lab/mantine-cognito", // Exclude from server bundle
-    //         ];
-    //     }
-    //     return config;
-    // },
 };
 
 module.exports = {

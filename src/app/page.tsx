@@ -6,6 +6,8 @@ import {Button, Container, Group, Paper, Progress, Table, Title} from "@mantine/
 import Link from "next/link";
 import {HealthBoardDTO, SiteDTO, UserProfileDTO} from "@/app/DrsMessTypes";
 import {fetchWithAuth} from "@/utils/fetchWithAuth";
+import {useAppSelector} from "@/lib/hooks";
+import {RootState} from "@/lib/store";
 
 export default function Home() {
     // const { logout } = useAuth();
@@ -14,9 +16,10 @@ export default function Home() {
     const [nickname, setNickname] = useState<string | null>(null);
     const [healthBoard, setHealthBoard] = useState<HealthBoardDTO>({});
     const [sites, setSites] = useState<SiteDTO[]>([]);
+    const token = useAppSelector((state: RootState) => state.auth.accessToken);
 
     useEffect(() => {
-        fetchWithAuth<UserProfileDTO>("/api/v1/profile").then((profileResponse) => {
+        fetchWithAuth<UserProfileDTO>("/api/v1/profile", token).then((profileResponse) => {
             if (profileResponse) {
                 setProfile(profileResponse);
                 setNickname(profileResponse.nickname || '');
@@ -27,13 +30,13 @@ export default function Home() {
 
     useEffect(() => {
         if (profile.healthBoardId && profile.healthBoardId.length > 0) {
-            fetchWithAuth<HealthBoardDTO>(`/api/v1/health-boards/${profile.healthBoardId}`).then((healthBoardResponse) => {
+            fetchWithAuth<HealthBoardDTO>(`/api/v1/health-boards/${profile.healthBoardId}`, token).then((healthBoardResponse) => {
                 if (healthBoardResponse) {
                     setHealthBoard(healthBoardResponse);
                 }
             });
 
-            fetchWithAuth<SiteDTO[]>(`/api/v1/health-boards/${profile.healthBoardId}/sites`).then((hospitalsResponse) => {
+            fetchWithAuth<SiteDTO[]>(`/api/v1/health-boards/${profile.healthBoardId}/sites`, token).then((hospitalsResponse) => {
                 if (hospitalsResponse) {
                     setSites(hospitalsResponse);
                 }

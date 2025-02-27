@@ -12,10 +12,11 @@ import '@mantine/core/styles.layer.css';
 import '@/app/layout-data-table.css';
 import {DatePickerInput} from "@mantine/dates";
 import {useForm} from "@mantine/form";
-import {getAccessToken} from "@espresso-lab/mantine-cognito";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import {fetchWithAuth} from "@/utils/fetchWithAuth";
+import {RootState} from "@/lib/store";
+import {useAppSelector} from "@/lib/hooks";
 dayjs.extend(relativeTime);
 
 export default function WardPage() {
@@ -23,12 +24,13 @@ export default function WardPage() {
     const router = useRouter();
     const params = useParams();
     const [modalOpened, setModalOpened] = useState(false);
-
     const [ward, setWard] = useState<WardDTO>({});
+
+    const token = useAppSelector((state: RootState) => state.auth.accessToken);
 
     useEffect(() => {
         if (params && params.healthBoard) {
-            fetchWithAuth<WardDTO>(`/api/v1/health-boards/${params.healthBoard}/sites/${params.siteId}/${params.wardId}`).then((resp) => {
+            fetchWithAuth<WardDTO>(`/api/v1/health-boards/${params.healthBoard}/sites/${params.siteId}/${params.wardId}`, token).then((resp) => {
                 if (resp) {
                     setWard(resp);
                 }
@@ -45,7 +47,6 @@ export default function WardPage() {
 
     const handleSubmit = async (values: WalkDTO) => {
         try {
-            const token = await getAccessToken();
             const payload = {
                 ...values,
                 date: dayjs(values.date).format("YYYY-MM-DD") // Format just before submission
