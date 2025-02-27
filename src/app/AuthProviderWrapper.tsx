@@ -1,7 +1,13 @@
 "use client";
 
 import React from "react";
-import {MantineAuth} from "@espresso-lab/mantine-cognito";
+import dynamic from "next/dynamic";
+// import {MantineAuth} from "@espresso-lab/mantine-cognito";
+
+const MantineAuth = dynamic(
+    () => import('@espresso-lab/mantine-cognito').then((mod) => mod.MantineAuth),
+    { ssr: false } // Ensure it's client-side only
+);
 
 export function AuthProviderWrapper({ children }: { children: React.ReactNode }) {
     return (

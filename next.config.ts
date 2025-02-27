@@ -24,7 +24,7 @@ const nextConfig: NextConfig = {
 
 module.exports = {
     // ... rest of the configuration.
-    output: "export",
+    output: "standalone",
 };
 
 export default nextConfig;
