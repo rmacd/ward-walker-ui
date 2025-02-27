@@ -16,21 +16,19 @@ import '@mantine/core/styles.layer.css';
 import 'mantine-datatable/styles.layer.css';
 import '@/app/layout-data-table.css';
 import {DataTable, DataTableSortStatus} from "mantine-datatable";
-import {useAppSelector} from "@/lib/hooks";
-import {RootState} from "@/lib/store";
+import {useSession} from "next-auth/react";
 
 export default function SitePage() {
 
     const router = useRouter();
     const params = useParams();
-    const token = useAppSelector((state: RootState) => state.auth.accessToken);
-
+    const {data: session} = useSession();
 
     const [site, setSite] = useState<SiteDTO>({});
 
     useEffect(() => {
         if (params && params.healthBoard) {
-            fetchWithAuth<SiteDTO>(`/api/v1/health-boards/${params.healthBoard}/sites/${params.siteId}`, token).then((hospitalResponse) => {
+            fetchWithAuth<SiteDTO>(`/api/v1/health-boards/${params.healthBoard}/sites/${params.siteId}`, session?.accessToken).then((hospitalResponse) => {
                 if (hospitalResponse) {
                     setSite(hospitalResponse);
                     const data = sortBy(hospitalResponse.wards, sortStatus.columnAccessor) as WardDTO[];

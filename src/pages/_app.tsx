@@ -9,6 +9,8 @@ const theme = createTheme({
     /** Put your mantine theme override here */
 });
 
+// THIS FILE IS FOR OLD PAGES ROUTER
+
 export default function App({Component, pageProps}: AppProps) {
     return (
         <MantineProvider theme={theme}>

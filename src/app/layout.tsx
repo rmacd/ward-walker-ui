@@ -5,11 +5,11 @@ import '@mantine/notifications/styles.css';
 
 import {ColorSchemeScript, MantineProvider, mantineHtmlProps} from '@mantine/core';
 import {MainLayout} from "@/app/MainLayout";
-import {AuthProviderWrapper} from "@/app/AuthProviderWrapper";
 import {Notifications} from '@mantine/notifications';
-import StoreProvider from "@/components/StoreProvider";
 import React from "react";
 import {Viewport} from "next";
+import {getServerSession} from "next-auth";
+import SessionProviderWrapper from "@/components/SessionProviderWrapper";
 
 export const metadata = {
     title: 'Ward Walker',
@@ -23,9 +23,11 @@ export const viewport: Viewport = {
     maximumScale: 1,
 };
 
-export default function RootLayout({children,}: {
+export default async function RootLayout({children,}: {
     children: React.ReactNode;
 }) {
+    const session = await getServerSession();
+
     return (
         <html lang="en" {...mantineHtmlProps}>
         <head>
@@ -34,16 +36,14 @@ export default function RootLayout({children,}: {
         </head>
         <body>
 
-        <MantineProvider>
-            <Notifications position={"top-center"}/>
-            <StoreProvider>
-                <AuthProviderWrapper>
-                    <MainLayout>
-                        {children}
-                    </MainLayout>
-                </AuthProviderWrapper>
-            </StoreProvider>
-        </MantineProvider>
+        <SessionProviderWrapper session={session}>
+            <MantineProvider>
+                <Notifications position={"top-center"}/>
+                <MainLayout>
+                    {children}
+                </MainLayout>
+            </MantineProvider>
+        </SessionProviderWrapper>
 
         </body>
         </html>

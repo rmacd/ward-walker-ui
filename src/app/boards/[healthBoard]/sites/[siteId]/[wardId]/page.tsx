@@ -5,7 +5,7 @@ import {Accordion, Button, Container, Group, Modal, Paper, Text, Textarea, Title
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
-import { WalkDTO, WardDTO} from "@/app/DrsMessTypes";
+import {WalkDTO, WardDTO} from "@/app/DrsMessTypes";
 
 import '@mantine/dates/styles.css'
 import '@mantine/core/styles.layer.css';
@@ -15,8 +15,8 @@ import {useForm} from "@mantine/form";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import {fetchWithAuth} from "@/utils/fetchWithAuth";
-import {RootState} from "@/lib/store";
-import {useAppSelector} from "@/lib/hooks";
+import {useSession} from "next-auth/react";
+
 dayjs.extend(relativeTime);
 
 export default function WardPage() {
@@ -25,12 +25,12 @@ export default function WardPage() {
     const params = useParams();
     const [modalOpened, setModalOpened] = useState(false);
     const [ward, setWard] = useState<WardDTO>({});
+    const {data: session} = useSession({required: true});
 
-    const token = useAppSelector((state: RootState) => state.auth.accessToken);
 
     useEffect(() => {
         if (params && params.healthBoard) {
-            fetchWithAuth<WardDTO>(`/api/v1/health-boards/${params.healthBoard}/sites/${params.siteId}/${params.wardId}`, token).then((resp) => {
+            fetchWithAuth<WardDTO>(`/api/v1/health-boards/${params.healthBoard}/sites/${params.siteId}/${params.wardId}`, session?.accessToken).then((resp) => {
                 if (resp) {
                     setWard(resp);
                 }
@@ -56,7 +56,7 @@ export default function WardPage() {
                 body: JSON.stringify(payload),
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token ?? ''}`
+                    'Authorization': `Bearer ${session?.accessToken ?? ''}`
                 }
             });
             if (!response.ok) {

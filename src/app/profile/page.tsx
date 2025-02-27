@@ -4,18 +4,15 @@ import {useEffect, useState} from 'react';
 import {Button, Checkbox, Container, Loader, Select, TextInput, Title} from '@mantine/core';
 import {HealthBoardDTO, UserProfileDTO} from "@/app/DrsMessTypes";
 import {useForm} from '@mantine/form';
-
 import { notifications } from '@mantine/notifications';
 import {fetchWithAuth} from "@/utils/fetchWithAuth";
-import {RootState} from "@/lib/store";
-import {useAppSelector} from "@/lib/hooks";
+import {useSession} from "next-auth/react";
 
 export default function ProfilePage() {
     const [profile, setProfile] = useState<UserProfileDTO>({});
     const [healthBoards, setHealthBoards] = useState<HealthBoardDTO[]>([]);
     const [loading, setLoading] = useState(true);
-
-    const token = useAppSelector((state: RootState) => state.auth.accessToken);
+    const {data: session, status} = useSession({required: true});
 
     const form = useForm({
         initialValues: {
@@ -30,6 +27,10 @@ export default function ProfilePage() {
     });
 
     useEffect(() => {
+        console.debug("Profile.tsx: auth status", status, "session", session);
+    }, [session, status]);
+
+    useEffect(() => {
         form.setValues({
             nickname: profile.nickname || '',
             healthBoardId: profile.healthBoardId || '',
@@ -37,13 +38,16 @@ export default function ProfilePage() {
         })
     }, [profile]);
 
-
     useEffect(() => {
+        // todo remove
+        console.debug("Profile.tsx: auth status", status, "session/token", session?.accessToken);
+        if (status !== "authenticated") return;
+
         async function fetchData() {
             try {
                 const [healthBoardsResponse, profileResponse] = await Promise.all([
-                    fetchWithAuth<HealthBoardDTO[]>("/api/v1/health-boards", token),
-                    fetchWithAuth<UserProfileDTO>("/api/v1/profile", token),
+                    fetchWithAuth<HealthBoardDTO[]>("/api/v1/health-boards", session?.accessToken),
+                    fetchWithAuth<UserProfileDTO>("/api/v1/profile", session?.accessToken),
                 ]);
 
                 console.debug("got hb", healthBoardsResponse);
@@ -65,7 +69,13 @@ export default function ProfilePage() {
         }
 
         fetchData();
+
     }, []);
+
+
+    if (status !== "authenticated") {
+        return <>Not logged in</>;
+    }
 
     if (loading) {
         return (
@@ -83,7 +93,7 @@ export default function ProfilePage() {
                 body: JSON.stringify(values),
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token ?? ''}`,
+                    'Authorization': `Bearer ${session.accessToken ?? ''}`,
                 },
             });
 

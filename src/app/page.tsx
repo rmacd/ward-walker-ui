@@ -6,9 +6,8 @@ import {Button, Container, Group, Paper, Progress, Table, Title, Text} from "@ma
 import Link from "next/link";
 import {HealthBoardDTO, SiteDTO, UserProfileDTO} from "@/app/DrsMessTypes";
 import {fetchWithAuth} from "@/utils/fetchWithAuth";
-import {useAppSelector} from "@/lib/hooks";
-import {RootState} from "@/lib/store";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import {signIn, useSession} from "next-auth/react";
 
 export default function Home() {
     // const { logout } = useAuth();
@@ -17,10 +16,11 @@ export default function Home() {
     const [nickname, setNickname] = useState<string | null>(null);
     const [healthBoard, setHealthBoard] = useState<HealthBoardDTO>({} as HealthBoardDTO);
     const [sites, setSites] = useState<SiteDTO[]>([]);
-    const token = useAppSelector((state: RootState) => state.auth.accessToken);
+
+    const {data: session} = useSession();
 
     useEffect(() => {
-        fetchWithAuth<UserProfileDTO>("/api/v1/profile", token).then((profileResponse) => {
+        fetchWithAuth<UserProfileDTO>("/api/v1/profile", session?.accessToken).then((profileResponse) => {
             if (profileResponse) {
                 setProfile(profileResponse);
                 setNickname(profileResponse.nickname || '');
@@ -30,13 +30,13 @@ export default function Home() {
 
     useEffect(() => {
         if (profile.healthBoardId && profile.healthBoardId.length > 0) {
-            fetchWithAuth<HealthBoardDTO>(`/api/v1/health-boards/${profile.healthBoardId}`, token).then((healthBoardResponse) => {
+            fetchWithAuth<HealthBoardDTO>(`/api/v1/health-boards/${profile.healthBoardId}`, session?.accessToken).then((healthBoardResponse) => {
                 if (healthBoardResponse) {
                     setHealthBoard(healthBoardResponse);
                 }
             });
 
-            fetchWithAuth<SiteDTO[]>(`/api/v1/health-boards/${profile.healthBoardId}/sites`, token).then((hospitalsResponse) => {
+            fetchWithAuth<SiteDTO[]>(`/api/v1/health-boards/${profile.healthBoardId}/sites`, session?.accessToken).then((hospitalsResponse) => {
                 if (hospitalsResponse) {
                     setSites(hospitalsResponse);
                 }
@@ -44,20 +44,13 @@ export default function Home() {
         }
     }, [profile]);
 
-    useEffect(() => {
-        if (!token || token.length == 0) {
-            router.push('/login');
-            return;
-        }
-    }, [token]);
-
     const handleRowClick = (healthBoardId: string, siteId: string) => {
         console.debug(`Navigating ${nickname} to hospital: ${healthBoardId}/${siteId}`);
         router.push(`/boards/${healthBoardId}/sites/${siteId}`);
     };
 
-    if (!token || token.length == 0) {
-        return <LoadingSpinner/>
+    if (!session?.accessToken || session.accessToken.length == 0) {
+        return <LoadingSpinner/>;
     }
 
     if (profile.cognitoId && !(profile?.nickname)) {
