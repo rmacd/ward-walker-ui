@@ -66,7 +66,7 @@ export default function SitePage() {
                 {/*<Text>Welcome, {nickname ? nickname : "Guest"}</Text>*/}
 
                 <Paper shadow={"xs"} p={"xl"} mb={"xl"}>
-                    <Title order={2} mb="xs">Details: {site.name}</Title>
+                    <Title order={2} mb="xs">Ward Walks: {site.name}</Title>
                 </Paper>
 
                 <DataTable

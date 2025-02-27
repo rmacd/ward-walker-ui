@@ -1,20 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
-import {Button, Container, Group, Paper, Progress, Table, Title} from "@mantine/core";
+import {Button, Container, Group, Paper, Progress, Table, Title, Text} from "@mantine/core";
 import Link from "next/link";
 import {HealthBoardDTO, SiteDTO, UserProfileDTO} from "@/app/DrsMessTypes";
 import {fetchWithAuth} from "@/utils/fetchWithAuth";
 import {useAppSelector} from "@/lib/hooks";
 import {RootState} from "@/lib/store";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function Home() {
     // const { logout } = useAuth();
     const router = useRouter();
-    const [profile, setProfile] = useState<UserProfileDTO>({});
+    const [profile, setProfile] = useState<UserProfileDTO>({} as UserProfileDTO);
     const [nickname, setNickname] = useState<string | null>(null);
-    const [healthBoard, setHealthBoard] = useState<HealthBoardDTO>({});
+    const [healthBoard, setHealthBoard] = useState<HealthBoardDTO>({} as HealthBoardDTO);
     const [sites, setSites] = useState<SiteDTO[]>([]);
     const token = useAppSelector((state: RootState) => state.auth.accessToken);
 
@@ -46,6 +47,7 @@ export default function Home() {
     useEffect(() => {
         if (!token || token.length == 0) {
             router.push('/login');
+            return;
         }
     }, [token]);
 
@@ -54,13 +56,26 @@ export default function Home() {
         router.push(`/boards/${healthBoardId}/sites/${siteId}`);
     };
 
+    if (!token || token.length == 0) {
+        return <LoadingSpinner/>
+    }
+
+    if (profile.cognitoId && !(profile?.nickname)) {
+        return (
+            <>
+                <Text mb={"md"}>You need to set up your profile first</Text>
+                <Button component={Link} href={"/profile"}>Edit profile</Button>
+            </>
+        )
+    }
+
     return (
         <Container size={"md"} py={"xl"}>
 
             {/*<Text>Welcome, {nickname ? nickname : "Guest"}</Text>*/}
 
             <Paper shadow={"xs"} p={"xl"} mb={"xl"}>
-                <Title order={2} mb="xs">Leaderboard: {healthBoard.name}</Title>
+                <Title order={2} mb="xs">Ward Walks: {healthBoard.name}</Title>
             </Paper>
 
             <Table highlightOnHover verticalSpacing={"md"}>
