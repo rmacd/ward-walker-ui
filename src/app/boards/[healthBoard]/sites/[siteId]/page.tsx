@@ -78,11 +78,6 @@ export default function SitePage() {
                     }}
                     columns={[
                         {
-                            accessor: 'code',
-                            title: 'code',
-                            width: 80,
-                        },
-                        {
                             accessor: 'name',
                             title: 'name',
                             textAlign: 'left',
