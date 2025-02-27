@@ -23,7 +23,6 @@ export default function Unauthorised() {
             </Paper>
 
             <Group mt="lg">
-                {/*<Button onClick={logout} variant="filled">Log In</Button>*/}
                 <Button component={Link} href={"/about"} variant="outline">Learn More</Button>
             </Group>
         </Container>

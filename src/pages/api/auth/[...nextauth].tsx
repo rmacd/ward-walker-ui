@@ -20,16 +20,12 @@ export const authOptions = {
             profile?: Profile | null;
             isNewUser?: boolean
         }) {
-            // console.log("token", token, "user", user, "account", account);
             if (account) {
-                console.log("Adding account token to session token");
                 token.accessToken = account.access_token;
             }
             return token;
         },
         async session({ session, token }: { session: Session; token: JWT }) {
-            console.log("SESSION CALLBACK TRIGGERED");
-            console.log("session", session, "token", token);
             return {
                 ...session,
                 accessToken: token.accessToken
