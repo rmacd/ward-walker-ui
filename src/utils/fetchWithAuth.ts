@@ -1,6 +1,10 @@
 "use client";
 
 export async function fetchWithAuth<T>(url: string, token: string | null, method: "GET" | "POST" | "PUT" = "GET"): Promise<T | null> {
+    if (null == token || token.length == 0) {
+        console.error("Token is missing")
+        return null;
+    }
     try {
         const response = await fetch(url, {
             method,

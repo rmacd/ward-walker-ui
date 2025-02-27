@@ -5,16 +5,20 @@ import classes from './MainLayout.module.css';
 import {AppShell, Burger, Group, Title, UnstyledButton} from "@mantine/core";
 import {useDisclosure} from "@mantine/hooks";
 import Link from "next/link";
+import {useRouter} from "next/navigation";
+import {useAppSelector} from "@/lib/hooks";
+import {RootState} from "@/lib/store";
 
 const links = [
     {link: '/', label: 'Home'},
     {link: '/about', label: 'About'},
-    {link: '/profile', label: 'Profile'}
 ];
 
 export function MainLayout({children}: { children: React.ReactNode }) {
 
+    const router = useRouter();
     const [opened, {toggle}] = useDisclosure();
+    const isAuthenticated = useAppSelector((state: RootState) => state.auth.isAuthenticated);
 
     return (
         <AppShell
@@ -27,11 +31,20 @@ export function MainLayout({children}: { children: React.ReactNode }) {
                     <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
                     <Group justify="space-between" style={{ flex: 1 }}>
                         {/*<MantineLogo size={30} />*/}
-                        <Title order={3}>Ward Walker</Title>
+                        <Title order={3} style={{cursor: "pointer"}} onClick={() => router.push('/')}>Ward Walker</Title>
                         <Group ml="xl" gap={0} visibleFrom="sm">
                             {links.map((link) => (
                                 <UnstyledButton component={Link} href={link.link} key={link.label} className={classes.control}>{link.label}</UnstyledButton>
                             ))}
+
+                            {(isAuthenticated) && (
+                                <UnstyledButton component={Link} href={'/profile'} className={classes.control}>Profile</UnstyledButton>
+                            )}
+
+                            {(!isAuthenticated) && (
+                                <UnstyledButton component={Link} href={'/login'} className={classes.control}>Login</UnstyledButton>
+                            )}
+
                         </Group>
                     </Group>
                 </Group>
@@ -41,6 +54,13 @@ export function MainLayout({children}: { children: React.ReactNode }) {
                 {links.map((link) => (
                     <UnstyledButton component={Link} href={link.link} key={link.label} className={classes.control} onClick={toggle}>{link.label}</UnstyledButton>
                 ))}
+                {(isAuthenticated) && (
+                    <UnstyledButton component={Link} href={'/profile'} className={classes.control} onClick={toggle}>Profile</UnstyledButton>
+                )}
+
+                {(!isAuthenticated) && (
+                    <UnstyledButton component={Link} href={'/login'} className={classes.control} onClick={toggle}>Login</UnstyledButton>
+                )}
             </AppShell.Navbar>
 
             <AppShell.Main>

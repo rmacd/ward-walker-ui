@@ -25,7 +25,6 @@ export default function Home() {
                 setNickname(profileResponse.nickname || '');
             }
         });
-
     }, []);
 
     useEffect(() => {
@@ -43,6 +42,12 @@ export default function Home() {
             })
         }
     }, [profile]);
+
+    useEffect(() => {
+        if (!token || token.length == 0) {
+            router.push('/login');
+        }
+    }, [token]);
 
     const handleRowClick = (healthBoardId: string, siteId: string) => {
         console.debug(`Navigating ${nickname} to hospital: ${healthBoardId}/${siteId}`);

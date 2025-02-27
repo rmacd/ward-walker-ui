@@ -1,7 +1,7 @@
 "use client";
 
 import {useParams} from 'next/navigation';
-import {Button, Container, Group, Paper, Title} from "@mantine/core";
+import {Button, Container, Group, Paper, Text, Title} from "@mantine/core";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
@@ -92,8 +92,8 @@ export default function SitePage() {
                             accessor: 'lastWalked',
                             title: 'Last Walked',
                             sortable: true,
-                            render: ({lastWalked}) => {
-                                return (<>{(lastWalked) ? dayjs(lastWalked).fromNow() : 'never'}</>)
+                            render: ({lastWalked, code}) => {
+                                return (<Text key={code || ''}>{(lastWalked) ? dayjs(lastWalked).fromNow() : 'never'}</Text>)
                             }
                         }
                     ]}

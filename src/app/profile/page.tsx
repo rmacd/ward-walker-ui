@@ -42,8 +42,8 @@ export default function ProfilePage() {
         async function fetchData() {
             try {
                 const [healthBoardsResponse, profileResponse] = await Promise.all([
-                    fetchWithAuth<HealthBoardDTO[]>("/api/v1/health-boards"),
-                    fetchWithAuth<UserProfileDTO>("/api/v1/profile"),
+                    fetchWithAuth<HealthBoardDTO[]>("/api/v1/health-boards", token),
+                    fetchWithAuth<UserProfileDTO>("/api/v1/profile", token),
                 ]);
 
                 console.debug("got hb", healthBoardsResponse);
