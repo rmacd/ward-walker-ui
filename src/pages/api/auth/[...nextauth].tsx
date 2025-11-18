@@ -13,7 +13,7 @@ export const authOptions = {
     ],
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
-        async jwt({ token, user, account, profile, isNewUser }: {
+        async jwt({ token, account}: {
             token: JWT;
             user?: User;
             account?: Account | null;

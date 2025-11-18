@@ -52,9 +52,9 @@ export default function SitePage() {
         }
     }, [sortStatus, site]);
 
-    const handleRowClick = (wardCode: string) => {
-        console.debug(`Navigating to ward: ${params?.healthBoard}/${params?.siteId}/${wardCode}`);
-        router.push(`/boards/${params?.healthBoard}/sites/${params?.siteId}/${wardCode}`);
+    const handleRowClick = (wardId: string) => {
+        console.debug(`Navigating to ward: ${params?.healthBoard}/${params?.siteId}/${wardId}`);
+        router.push(`/boards/${params?.healthBoard}/sites/${params?.siteId}/${wardId}`);
     };
 
     return (
@@ -72,7 +72,7 @@ export default function SitePage() {
                     highlightOnHover
                     records={records || []}
                     onRowClick={({ record }) => {
-                        handleRowClick(record.code || '')
+                        handleRowClick(record.id || '')
                     }}
                     columns={[
                         {
@@ -85,8 +85,8 @@ export default function SitePage() {
                             accessor: 'lastWalked',
                             title: 'Last Walked',
                             sortable: true,
-                            render: ({lastWalked, code}) => {
-                                return (<Text key={code || ''}>{(lastWalked) ? dayjs(lastWalked).fromNow() : 'never'}</Text>)
+                            render: ({lastWalked, id}) => {
+                                return (<Text key={id || ''}>{(lastWalked) ? dayjs(lastWalked).fromNow() : 'never'}</Text>)
                             }
                         }
                     ]}

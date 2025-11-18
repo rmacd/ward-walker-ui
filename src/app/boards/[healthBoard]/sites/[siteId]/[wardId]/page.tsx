@@ -87,11 +87,11 @@ export default function WardPage() {
                         mb={"md"}
                     />
                     <Textarea
-                        label="Comments"
+                        label="Additional Comments"
                         rows={4}
                         {...form.getInputProps('comments')}
                         description="eg the nature of any questions asked, who was on the ward"
-                        placeholder="Input placeholder"
+                        placeholder="(optional)"
                         mb={"md"}
                     />
                     <Button type="submit">Save</Button>
@@ -99,18 +99,24 @@ export default function WardPage() {
             </Modal>
 
             <Container size={"md"} py={"xl"}>
-
                 <Paper shadow={"xs"} p={"xl"} mb={"xl"}>
                     <Title order={2} mb="xs">Details: {ward.name}</Title>
                     {(!ward.lastWalked) && (
-                        <>No walks recorded</>
+                        <>No walks recorded (yet!)</>
                     )}
                     {(ward.lastWalked) && (
                         <Accordion variant={"separated"}>
                             {ward.walks?.map((walk) => {
                                 return (
                                     <Accordion.Item key={walk.id} value={walk.id || ''}>
-                                        <Accordion.Control>{dayjs(walk.date).fromNow()} - {walk.name}</Accordion.Control>
+                                        <Accordion.Control>
+                                            {dayjs(walk.date).isSame(dayjs(), "day")
+                                                ? "today"
+                                                : dayjs(walk.date).fromNow()
+                                            }
+                                            {" - "}{walk.name}
+                                            {/*{dayjs(walk.date).fromNow()} - {walk.name}*/}
+                                        </Accordion.Control>
                                         <Accordion.Panel>
                                             {(walk.comments) && (
                                                 <Text>

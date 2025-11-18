@@ -2,12 +2,11 @@
 
 import '@mantine/core/styles.css';
 import classes from './MainLayout.module.css';
-import {Anchor, AppShell, Burger, Group, Title, UnstyledButton} from "@mantine/core";
+import {AppShell, Burger, Group, Title, UnstyledButton} from "@mantine/core";
 import {useDisclosure} from "@mantine/hooks";
 import Link from "next/link";
 import {signIn, signOut, useSession} from "next-auth/react";
 import LoginUnstyled from "@/components/login-unstyled";
-import {useEffect} from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 const links = [
