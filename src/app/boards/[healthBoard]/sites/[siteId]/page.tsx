@@ -8,6 +8,7 @@ import {useEffect, useState} from "react";
 import {SiteDTO, WardDTO} from "@/app/DrsMessTypes";
 import {fetchWithAuth} from "@/utils/fetchWithAuth";
 import sortBy from 'lodash/sortBy';
+import {signIn} from 'next-auth/react';
 import dayjs from 'dayjs';
 import relativeTime from "dayjs/plugin/relativeTime";
 
@@ -17,6 +18,7 @@ import 'mantine-datatable/styles.layer.css';
 import '@/app/layout-data-table.css';
 import {DataTable, DataTableSortStatus} from "mantine-datatable";
 import {useSession} from "next-auth/react";
+import {UnauthorizedError} from "@/app/utils/errors";
 
 export default function SitePage() {
 
@@ -33,6 +35,10 @@ export default function SitePage() {
                     setSite(hospitalResponse);
                     const data = sortBy(hospitalResponse.wards, sortStatus.columnAccessor) as WardDTO[];
                     setRecords(sortStatus.direction === 'desc' ? data.reverse() : data);
+                }
+            }).catch((err) => {
+                if (err instanceof UnauthorizedError) {
+                    signIn("cognito");
                 }
             })
         }

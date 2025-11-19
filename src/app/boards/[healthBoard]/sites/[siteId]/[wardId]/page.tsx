@@ -15,7 +15,8 @@ import {useForm} from "@mantine/form";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import {fetchWithAuth} from "@/utils/fetchWithAuth";
-import {useSession} from "next-auth/react";
+import {signIn, useSession} from "next-auth/react";
+import {UnauthorizedError} from "@/app/utils/errors";
 
 dayjs.extend(relativeTime);
 
@@ -35,6 +36,11 @@ export default function WardPage() {
                     setWard(resp);
                 }
             })
+                .catch((err) => {
+                    if (err instanceof UnauthorizedError) {
+                        signIn("cognito");
+                    }
+                })
         }
     }, [params]);
 

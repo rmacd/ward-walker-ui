@@ -2,12 +2,14 @@
 
 import {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
-import {Button, Container, Group, Paper, Progress, Table, Title, Text} from "@mantine/core";
+import {Button, Container, Group, Paper, Progress, Table, Title, Text, Alert} from "@mantine/core";
 import Link from "next/link";
 import {HealthBoardDTO, SiteDTO, UserProfileDTO} from "@/app/DrsMessTypes";
 import {fetchWithAuth} from "@/utils/fetchWithAuth";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import {useSession} from "next-auth/react";
+import {signIn, useSession} from "next-auth/react";
+import {UnauthorizedError} from "@/app/utils/errors";
+import {IconCirclePlus} from "@tabler/icons-react";
 
 export default function Home() {
     // const { logout } = useAuth();
@@ -34,11 +36,19 @@ export default function Home() {
                 if (healthBoardResponse) {
                     setHealthBoard(healthBoardResponse);
                 }
+            }).catch((err) => {
+                if (err instanceof UnauthorizedError) {
+                    signIn("cognito");
+                }
             });
 
             fetchWithAuth<SiteDTO[]>(`/api/v1/health-boards/${profile.healthBoardId}/sites`, session?.accessToken).then((hospitalsResponse) => {
                 if (hospitalsResponse) {
                     setSites(hospitalsResponse);
+                }
+            }).catch((err) => {
+                if (err instanceof UnauthorizedError) {
+                    signIn("cognito");
                 }
             })
         }
@@ -99,7 +109,9 @@ export default function Home() {
 
             <Group mt="lg">
                 {/*<Button onClick={logout} variant="filled">Log Out</Button>*/}
-                <Button component={Link} href={"/about"} variant="outline">Learn More</Button>
+                <Button component={Link} href={"/add"} variant="outline">
+                    Add site
+                </Button>
             </Group>
         </Container>
     );
